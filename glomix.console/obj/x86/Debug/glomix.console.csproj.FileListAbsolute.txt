@@ -1,0 +1,13 @@
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\glomix.console.exe.config
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\glomix.console.exe
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\glomix.console.pdb
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\sdk.dll
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\CsQuery.dll
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\CefSharp.dll
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\CefSharp.OffScreen.dll
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\CefSharp.Core.dll
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\sdk.pdb
+D:\Repositaries\glomix_\glomix.console\bin\x86\Debug\CsQuery.xml
+D:\Repositaries\glomix_\glomix.console\obj\x86\Debug\glomix.console.csprojResolveAssemblyReference.cache
+D:\Repositaries\glomix_\glomix.console\obj\x86\Debug\glomix.console.exe
+D:\Repositaries\glomix_\glomix.console\obj\x86\Debug\glomix.console.pdb

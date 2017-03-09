@@ -1,0 +1,10 @@
+D:\Repositaries\glomix_\sdk\bin\x86\Debug\sdk.dll.config
+D:\Repositaries\glomix_\sdk\bin\x86\Debug\sdk.dll
+D:\Repositaries\glomix_\sdk\bin\x86\Debug\sdk.pdb
+D:\Repositaries\glomix_\sdk\bin\x86\Debug\CsQuery.dll
+D:\Repositaries\glomix_\sdk\bin\x86\Debug\CsQuery.xml
+D:\Repositaries\glomix_\sdk\obj\x86\Debug\sdk.csprojResolveAssemblyReference.cache
+D:\Repositaries\glomix_\sdk\obj\x86\Debug\sdk.Properties.Resources.resources
+D:\Repositaries\glomix_\sdk\obj\x86\Debug\sdk.csproj.GenerateResource.Cache
+D:\Repositaries\glomix_\sdk\obj\x86\Debug\sdk.dll
+D:\Repositaries\glomix_\sdk\obj\x86\Debug\sdk.pdb
