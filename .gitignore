@@ -4,6 +4,7 @@
 # User-specific files
 *.suo
 *.user
+*.cache
 *.userosscache
 *.sln.docstates
 
@@ -21,3 +22,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+sdk/obj/
+
+# Nuget packages
+packages/
