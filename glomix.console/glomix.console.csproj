@@ -63,9 +63,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="IBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Status.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -75,6 +82,12 @@
       <Project>{53E4784E-B5C9-46C7-BAC3-4C774213CD49}</Project>
       <Name>sdk</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -89,7 +102,7 @@ RMDIR "$(TargetDir)ko/" /S /Q
 RMDIR "$(TargetDir)ru/" /S /Q
 RMDIR "$(TargetDir)zh-Hans/" /S /Q
 RMDIR "$(TargetDir)zh-Hant/" /S /Q
-RMDIR "$(TargetDir)mp3/" /S /Q
+#RMDIR "$(TargetDir)mp3/" /S /Q
 DEL "$(TargetDir)*.log" /Q</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

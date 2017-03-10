@@ -7,7 +7,7 @@
         static void Main(string[] args)
         {
             IBuilder builder = new BuilderImp();
-            builder.Menu().Page().Mix()?.BuildAsync();
+            builder.Menu().Page()?.Mix()?.BuildAsync();
             Main(null);
         }
     }

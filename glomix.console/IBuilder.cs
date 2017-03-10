@@ -9,12 +9,11 @@
 namespace glomix.console
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Text;
     using System.Threading.Tasks;
     using sdk;
     using sdk.model;
@@ -29,14 +28,6 @@ namespace glomix.console
 
     class BuilderImp : IBuilder
     {
-        private const string HOST = "https://globaldjmix.com";
-        private const string MSG_CHOICE = "Choice item and press ENTER...";
-        private const string MSG_CHOICE_MIX = "Choice item and press ENTER or put 'menu' to enter in main menu";
-        private const string MSG_MENU = "menu";
-        private const string DIRECTORY_MP3 = "mp3";
-        private const char SYMBOL_RETURN = '\r';
-        private const char SYMBOL_NEWLINE = '\n';
-
         private static readonly IList<Status> stats = new List<Status>();
 
         private Menu menu;
@@ -45,9 +36,10 @@ namespace glomix.console
 
         public IBuilder Menu()
         {
-            menu = Glomix.Menu(HOST).Result;
+            "Loading menu. Waiting...".Print();
+            menu = Glomix.Menu(Properties.Resources.Host).Result;
             menu.Print();
-            MSG_CHOICE.Print();
+            Properties.Resources.MsgMenu.Print();
             return this;
         }
 
@@ -55,44 +47,93 @@ namespace glomix.console
         {
             while( true )
             {
-                SYMBOL_RETURN.Print();
-                int menuIndex;
-                if( int.TryParse(Console.ReadKey().KeyChar.ToString(), out menuIndex) && menu.InRange(menuIndex) )
+                var key = Console.ReadKey();
+
+                // show available tracks,
+                // if the user has a choice of a track - return to the menu
+                if( key.Key == ConsoleKey.F2 )
                 {
-                    $"{SYMBOL_RETURN}Get data for {menu[menuIndex]}. Waiting...".Print();
-                    page = Glomix.Page(menu[menuIndex].Url).Result;
-                    page.Print();
-                    MSG_CHOICE_MIX.Print();
-                    return this;
+                    if( ShowTracks() )
+                        return null;
                 }
+
+                // show page with tracks
+                else if( ShowPage(key) )
+                    break;
             }
+            return this;
+        }
+
+        private static bool ShowTracks()
+        {
+            if( !Directory.Exists(Properties.Resources.DirectoryMp3) )
+            {
+                $"Directory {Properties.Resources.DirectoryMp3} is empty".Print();
+                return true;
+            }
+            var files = Directory.GetFiles(Properties.Resources.DirectoryMp3);
+            files.Print();
+            Properties.Resources.MsgPage.Print();
+            return PlayTrack(files);
+        }
+
+        private static bool PlayTrack(string[] files)
+        {
+            // num of file
+            var line = Console.ReadLine();
+
+            // IF PUT 'menu' - return to menu
+            if( !string.IsNullOrEmpty(line) && string.Equals(line.ToLower(), "menu") )
+                return true;
+
+            int number;
+            if( int.TryParse(line, out number) && files.InRange(number) )
+            {
+                Process.Start("wmplayer.exe", "\"" + Path.Combine(Directory.GetCurrentDirectory(), files[number]) + "\"");
+                return true;
+            }
+            return false;
+        }
+
+        private bool ShowPage(ConsoleKeyInfo key)
+        {
+            int menuIndex;
+            if( int.TryParse(key.KeyChar.ToString(), out menuIndex) && menu.InRange(menuIndex) )
+            {
+                $"Load {menu[menuIndex]}. Waiting...".Print();
+                page = Glomix.Page(menu[menuIndex].Url).Result;
+                page.Print();
+                Properties.Resources.MsgPage.Print();
+                return true;
+            }
+            return false;
         }
 
         public IBuilder Mix()
         {
             while( true )
             {
-                SYMBOL_RETURN.Print();
-                int number;
                 var line = Console.ReadLine();
+                int number;
                 if( int.TryParse(line, out number) && page.InRange(number) )
                 {
                     mix = Glomix.Mix(page[number].Url).Result;
                     return this;
                 }
-                // to main menu
-                if( !string.IsNullOrEmpty(line) && string.Equals(line.ToLower(), MSG_MENU) )
+                if( !string.IsNullOrEmpty(line) && string.Equals(line.ToLower(), "menu") )
                     return null;
-                MSG_CHOICE_MIX.Print();
+                Properties.Resources.MsgPage.Print();
             }
         }
 
         public async void BuildAsync() => await Task.Run(() =>
         {
-            if( Directory.Exists(DIRECTORY_MP3) == false )
-                Directory.CreateDirectory(DIRECTORY_MP3);
+            var dir = Properties.Resources.DirectoryMp3;
 
-            string fileName = $"{DIRECTORY_MP3}/{mix.Title}.{DIRECTORY_MP3}";
+            if( Directory.Exists(Properties.Resources.DirectoryMp3) == false )
+                Directory.CreateDirectory(dir);
+
+            string fileName = $"{dir}/{mix.Title}.{dir}";
             if( File.Exists(fileName) )
             {
                 while( true )
@@ -121,7 +162,6 @@ namespace glomix.console
                         {
                             case 0:
                                 stats.Add(new Status { Mix = mix });
-                                $"Download mix {mix}{SYMBOL_NEWLINE}".Print(ConsoleColor.Green);
                                 break;
                             case 100:
                                 stats.Remove(currentStatus);
@@ -132,46 +172,8 @@ namespace glomix.console
                     }
                 };
                 wc.DownloadFileAsync(new Uri(mix.Source), fileName);
+                $"Download mix {mix}".Print(ConsoleColor.Green);
             }
         });
-    }
-
-    class Status
-    {
-        public Mix Mix { get; set; }
-        public int Percentage { get; set; }
-    }
-
-    static class Extensions
-    {
-        public static void Print(this IList list)
-        {
-            for( var i = 0; i < list.Count; i++ )
-                Console.WriteLine($"{i:D2}. {list[i]}");
-        }
-
-        public static void Print(this IList<Status> list)
-        {
-            var strBuilder = new StringBuilder();
-            for( var i = 0; i < list.Count; i++ )
-                strBuilder.Append($"{i}. {list[i].Mix.Title.Substring(0, 4)}...{list[i].Percentage}% ");
-            Console.Title = strBuilder.ToString();
-        }
-
-        public static void Print(this string message, ConsoleColor color = ConsoleColor.Yellow)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(message);
-            Console.ResetColor();
-        }
-
-        public static void Print(this char message, ConsoleColor color = ConsoleColor.Yellow)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(message);
-            Console.ResetColor();
-        }
-
-        public static bool InRange(this IList list, int value) => value >= 0 && value < list.Count;
     }
 }
