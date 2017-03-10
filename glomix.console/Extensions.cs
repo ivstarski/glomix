@@ -5,13 +5,15 @@ namespace glomix.console
     using System.Collections.Generic;
     using System.Text;
 
-    static class Extensions
+    internal static class Extensions
     {
-        public static void Print(this IList list, ConsoleColor color = ConsoleColor.White)
+        public static IList Print(this IList list, ConsoleColor color = ConsoleColor.White)
         {
             for( var i = 0; i < list.Count; i++ )
                 Print($"{i:D2}. {list[i]}", color);
+            return list;
         }
+
 
         public static void Print(this IList<Status> list)
         {
@@ -31,10 +33,11 @@ namespace glomix.console
         public static void Print(this char message, ConsoleColor color = ConsoleColor.Yellow)
         {
             Console.ForegroundColor = color;
-            Console.WriteLine('\r'+ message);
+            Console.WriteLine('\r' + message);
             Console.ResetColor();
         }
 
-        public static bool InRange(this IList list, int value) => value >= 0 && value < list.Count;
+        public static bool Try(this IList list, ConsoleKeyInfo key, out int n)
+            => int.TryParse(key.KeyChar.ToString(), out n) && n >= 0 && n < list.Count;
     }
 }

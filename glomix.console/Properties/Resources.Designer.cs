@@ -97,7 +97,7 @@ namespace glomix.console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choice item and press ENTER or put &apos;menu&apos; to enter in main menu.
+        ///   Looks up a localized string similar to Select item or press &apos;F1&apos; to return in main menu.
         /// </summary>
         internal static string MsgPage {
             get {

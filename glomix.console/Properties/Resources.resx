@@ -130,6 +130,6 @@
     <value>Select menu or press &lt;F2&gt; and play downloaded tracks</value>
   </data>
   <data name="MsgPage" xml:space="preserve">
-    <value>Choice item and press ENTER or put 'menu' to enter in main menu</value>
+    <value>Select item or press 'F1' to return in main menu</value>
   </data>
 </root>
