@@ -1,10 +1,8 @@
 ﻿namespace glomix.console
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using sdk;
@@ -12,7 +10,6 @@
 
     internal class Program
     {
-        static readonly IList<Status> stats = new List<Status>();
         static ConsoleKeyInfo key;
         static Menu menu;
         static Page page;
@@ -133,8 +130,7 @@
                     if( key.Key == ConsoleKey.Delete )
                     {
                         File.Delete(Path.Combine(Directory.GetCurrentDirectory(), path));
-                        path = string.Empty;
-                        break;
+                        return string.Empty;
                     }
                     if( key.Key == ConsoleKey.Escape )
                         Environment.Exit(0);
@@ -155,21 +151,18 @@
                 {
                     if( e.ProgressPercentage != percentage )
                     {
-                        percentage = e.ProgressPercentage;
-                        var currentStatus = stats.FirstOrDefault(status => status.Mix == mix);
-                        if( currentStatus != null )
-                            currentStatus.Percentage = percentage;
+                        Status.SetPercentage(mix, (percentage = e.ProgressPercentage));
                         switch( e.ProgressPercentage )
                         {
                             case 0:
-                                stats.Add(new Status { Mix = mix });
+                                Status.Add(mix);
                                 break;
                             case 100:
-                                stats.Remove(currentStatus);
+                                Status.Remove(mix);
                                 $"{mix.Title} downloaded.".Print(ConsoleColor.DarkMagenta);
                                 break;
                         }
-                        stats.Print();
+                        Status.Print();
                     }
                 };
                 wc.DownloadFileAsync(new Uri(mix.Source), path);

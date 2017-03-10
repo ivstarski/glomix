@@ -2,8 +2,6 @@ namespace glomix.console
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
-    using System.Text;
 
     internal static class Extensions
     {
@@ -12,15 +10,6 @@ namespace glomix.console
             for( var i = 0; i < list.Count; i++ )
                 Print($"{i:D2}. {list[i]}", color);
             return list;
-        }
-
-
-        public static void Print(this IList<Status> list)
-        {
-            var strBuilder = new StringBuilder();
-            for( var i = 0; i < list.Count; i++ )
-                strBuilder.Append($"[{i}] {list[i].Mix.Title.Substring(0, 4)}...{list[i].Percentage}% ");
-            Console.Title = strBuilder.ToString();
         }
 
         public static void Print(this string message, ConsoleColor color = ConsoleColor.Yellow)
