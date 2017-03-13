@@ -69,6 +69,7 @@
                     return;
                 }
 
+                files.Print();
                 Properties.Resources.MsgPage.Print();
                 key = Console.ReadKey();
                 switch( key.Key )
@@ -136,7 +137,7 @@
                 $"Load {menu[index]}. Waiting...".Print();
                 page = Glomix.Page(menu[index].Url).Result;
                 page.Print();
-                $"Page {page.Paginator.Num} of {page.Paginator.Max}".Print(ConsoleColor.DarkGreen);
+                $"Page {page.Paginator.Num} of {page.Paginator.Max}".Print();
             }
         }
 
