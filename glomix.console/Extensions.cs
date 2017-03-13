@@ -2,6 +2,8 @@ namespace glomix.console
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
 
     internal static class Extensions
     {
@@ -9,6 +11,13 @@ namespace glomix.console
         {
             for( var i = 0; i < list.Count; i++ )
                 Print($"{i:D2}. {list[i]}", color);
+            return list;
+        }
+
+        public static List<FileInfo> Print(this List<FileInfo> list, ConsoleColor color = ConsoleColor.White)
+        {
+            for( var i = 0; i < list.Count; i++ )
+                Print($"{i:D2}. {list[i].Name}", color);
             return list;
         }
 

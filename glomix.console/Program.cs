@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using sdk;
@@ -10,37 +11,41 @@
 
     internal class Program
     {
-        static ConsoleKeyInfo key;
-        static Menu menu;
-        static Page page;
-        static Mix mix;
+        private static ConsoleKeyInfo key;
+        private static Menu menu;
+        private static Page page;
+        private static Mix mix;
 
-        // ReSharper disable once FunctionRecursiveOnAllPaths
-        // ReSharper disable once UnusedParameter.Local
-        private static void Main(string[] args)
+        private static void Main()
         {
-            ShowMenu();
+            Menu();
             do
             {
                 switch( (key = Console.ReadKey(false)).Key )
                 {
                     case ConsoleKey.F1:
-                        ShowMenu();
+                        Menu();
                         break;
                     case ConsoleKey.F2:
-                        PlayTrack();
+                        Play();
+                        break;
+                    case ConsoleKey.F3:
+                        Manage();
+                        break;
+                    case ConsoleKey.Escape:
+                        Environment.Exit(0);
                         break;
                     default:
-                        ShowPage();
-                        SelectMix();
-                        GetMixAsync(CheckDir());
-                        ShowMenu();
+                        Page();
+                        Mix();
+                        DownloadAsync();
+                        Menu();
                         break;
                 }
             } while( key.Key != ConsoleKey.Escape );
         }
 
-        private static void ShowMenu()
+        private static void Menu()
         {
             if( menu == null )
                 menu = Glomix.Menu(Properties.Resources.Host).Result;
@@ -48,32 +53,82 @@
             Properties.Resources.MsgMenu.Print();
         }
 
-        private static void PlayTrack()
+        private static void Play()
         {
-            var dir = Properties.Resources.DirectoryMp3;
-            if( Directory.Exists(dir) )
+            var path = Properties.Resources.DirectoryMp3;
+            if( Directory.Exists(path) )
             {
-                var files = Directory.GetFiles(dir).Print();
-                Properties.Resources.MsgPage.Print();
+                var files = Directory.GetFiles(path)
+                    .Select(s => new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), s)))
+                    .ToList();
 
-                key = Console.ReadKey();
-                if( key.Key == ConsoleKey.F1 )
+                // if empty
+                if( !files.Any() )
                 {
-                    ShowMenu();
+                    $"Directory {path} is empty".Print(ConsoleColor.Red);
                     return;
+                }
+
+                Properties.Resources.MsgPage.Print();
+                key = Console.ReadKey();
+                switch( key.Key )
+                {
+                    case ConsoleKey.F1:
+                        Menu();
+                        return;
+                    case ConsoleKey.Escape:
+                        Environment.Exit(0);
+                        return;
                 }
 
                 int number;
                 if( files.Try(key, out number) )
-                {
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), files[number].ToString());
-                    Process.Start("wmplayer.exe", "\"" + path + "\"");
-                }
+                    Process.Start("wmplayer.exe", "\"" + files[number].FullName + "\"");
             }
-            else $"Directory {dir} is empty".Print();
+            else $"Directory {path} is empty".Print(ConsoleColor.Red);
         }
 
-        private static void ShowPage()
+        private static void Manage()
+        {
+            var directoryMp3 = Properties.Resources.DirectoryMp3;
+            if( Directory.Exists(directoryMp3) )
+            {
+                while( true )
+                {
+                    var files = Directory.GetFiles(directoryMp3)
+                        .Select(s => new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), s)))
+                        .ToList();
+
+                    // if empty
+                    if( !files.Any() ) break;
+
+                    files.Print();
+                    Properties.Resources.MsgManage.Print();
+                    key = Console.ReadKey();
+                    switch( key.Key )
+                    {
+                        case ConsoleKey.F1:
+                            Menu();
+                            return;
+                        case ConsoleKey.Escape:
+                            Environment.Exit(0);
+                            return;
+                        case ConsoleKey.Delete:
+                            files.ForEach(info => File.Delete(info.FullName));
+                            Menu();
+                            return;
+                    }
+                    // delete mix
+                    int number;
+                    if( files.Try(key, out number) )
+                        File.Delete(files[number].FullName);
+                }
+            }
+            $"Directory {directoryMp3} is empty".Print(ConsoleColor.Red);
+            Menu();
+        }
+
+        private static void Page()
         {
             int index;
             if( menu.Try(key, out index) )
@@ -81,22 +136,25 @@
                 $"Load {menu[index]}. Waiting...".Print();
                 page = Glomix.Page(menu[index].Url).Result;
                 page.Print();
-                Properties.Resources.MsgPage.Print();
+                $"Page {page.Number} of {page.Paginator.Max}".Print(ConsoleColor.DarkGreen);
             }
         }
 
-        private static void SelectMix()
+        private static void Mix()
         {
             while( true )
             {
+                Properties.Resources.MsgPage.Print();
                 key = Console.ReadKey();
-                if( key.Key == ConsoleKey.F1 )
+                switch( key.Key )
                 {
-                    ShowMenu();
-                    return;
+                    case ConsoleKey.F1:
+                        Menu();
+                        return;
+                    case ConsoleKey.Escape:
+                        Environment.Exit(0);
+                        return;
                 }
-                if( key.Key == ConsoleKey.Escape )
-                    Environment.Exit(0);
 
                 int index;
                 if( page.Try(key, out index) )
@@ -105,45 +163,18 @@
                     mix = Glomix.Mix(page[index].Url).Result;
                     return;
                 }
-                Properties.Resources.MsgPage.Print();
             }
         }
 
-        private static string CheckDir()
+        private static async void DownloadAsync() => await Task.Run(() =>
         {
-            var dir = Properties.Resources.DirectoryMp3;
-            var path = $"{dir}/{mix.Title}.{dir}";
+            var path = CheckMix();
 
-            if( Directory.Exists(dir) == false )
-                Directory.CreateDirectory(dir);
-
-            if( File.Exists(path) )
-            {
-                while( true )
-                {
-                    $"Mix {mix.Title} has been downloaded.\nCan You Overwrite Mix? [y/n] or delete mix [del]".Print(ConsoleColor.Red);
-                    key = Console.ReadKey();
-                    if( key.Key == ConsoleKey.N )
-                        return string.Empty;
-                    if( key.Key == ConsoleKey.Y )
-                        break;
-                    if( key.Key == ConsoleKey.Delete )
-                    {
-                        File.Delete(Path.Combine(Directory.GetCurrentDirectory(), path));
-                        return string.Empty;
-                    }
-                    if( key.Key == ConsoleKey.Escape )
-                        Environment.Exit(0);
-                }
-            }
-            return path;
-        }
-
-        private static async void GetMixAsync(string path) => await Task.Run(() =>
-        {
+            // if path is empty, file has been downloaded
             if( string.IsNullOrEmpty(path) )
                 return;
-            $"Download mix {mix}".Print(ConsoleColor.Green);
+
+            var tempMix = (Mix)mix.Clone();
             using( var wc = new WebClient { Proxy = null } )
             {
                 var percentage = -1;
@@ -151,22 +182,51 @@
                 {
                     if( e.ProgressPercentage != percentage )
                     {
-                        Status.SetPercentage(mix, (percentage = e.ProgressPercentage));
+                        Status.SetPercentage(tempMix, (percentage = e.ProgressPercentage));
                         switch( e.ProgressPercentage )
                         {
                             case 0:
-                                Status.Add(mix);
+                                Status.Add(tempMix);
                                 break;
                             case 100:
-                                Status.Remove(mix);
-                                $"{mix.Title} downloaded.".Print(ConsoleColor.DarkMagenta);
+                                Status.Remove(tempMix);
+                                $"{tempMix.Title} downloaded.".Print(ConsoleColor.DarkMagenta);
                                 break;
                         }
                         Status.Print();
                     }
                 };
-                wc.DownloadFileAsync(new Uri(mix.Source), path);
+                $"Download mix {tempMix}".Print(ConsoleColor.Green);
+                wc.DownloadFileAsync(new Uri(tempMix.Source), path);
             }
         });
+
+        private static string CheckMix()
+        {
+            if( mix == null )
+                return string.Empty;
+            var directoryMp3 = Properties.Resources.DirectoryMp3;
+            var path = $"{directoryMp3}/{mix.Title}.mp3";
+            if( Directory.Exists(directoryMp3) == false )
+                Directory.CreateDirectory(directoryMp3);
+            if( File.Exists(path) )
+            {
+                while( true )
+                {
+                    $"{mix.Title} has been downloaded.\nCan You Overwrite Mix? [y/n]".Print(ConsoleColor.Red);
+                    switch( Console.ReadKey().Key )
+                    {
+                        case ConsoleKey.N:
+                            return string.Empty;
+                        case ConsoleKey.Y:
+                            return path;
+                        case ConsoleKey.Escape:
+                            Environment.Exit(0);
+                            break;
+                    }
+                }
+            }
+            return path;
+        }
     }
 }

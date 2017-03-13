@@ -126,10 +126,16 @@
   <data name="KeyMenu" xml:space="preserve">
     <value>F1</value>
   </data>
+  <data name="MsgManage" xml:space="preserve">
+    <value>Press &lt;F1&gt; for return to MENU
+Select number of mix, whan you want delete or [del] if delete all.</value>
+  </data>
   <data name="MsgMenu" xml:space="preserve">
-    <value>Select menu or press &lt;F2&gt; and play downloaded tracks</value>
+    <value>Select menu or run other operations:
+&lt;F2&gt; - Play
+&lt;F3&gt; - Managing</value>
   </data>
   <data name="MsgPage" xml:space="preserve">
-    <value>Select item or press 'F1' to return in main menu</value>
+    <value>Select item or press &lt;F1&gt; to return in main menu</value>
   </data>
 </root>

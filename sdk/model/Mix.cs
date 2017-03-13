@@ -1,6 +1,8 @@
 namespace sdk.model
 {
-    public class Mix : IContent
+    using System;
+
+    public class Mix : IContent, ICloneable
     {
         public string Source { get; set; }
         public string Url { get; set; }
@@ -14,6 +16,8 @@ namespace sdk.model
         public string RecDate { get; set; }
         public string Href { get; set; }
 
-        public override string ToString( ) => $"Genre: {Genre}, Artist: {Artist}, Size: {Size}";
+        public override string ToString() => $"Genre: {Genre}, Artist: {Artist}, Size: {Size}";
+
+        public object Clone() => MemberwiseClone();
     }
 }

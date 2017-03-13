@@ -88,7 +88,19 @@ namespace glomix.console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select menu or press &lt;F2&gt; and play downloaded tracks.
+        ///   Looks up a localized string similar to Press &lt;F1&gt; for return to MENU
+        ///Select number of mix, whan you want delete or [del] if delete all..
+        /// </summary>
+        internal static string MsgManage {
+            get {
+                return ResourceManager.GetString("MsgManage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select menu or run other operations:
+        ///&lt;F2&gt; - Play
+        ///&lt;F3&gt; - Managing.
         /// </summary>
         internal static string MsgMenu {
             get {
@@ -97,7 +109,7 @@ namespace glomix.console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select item or press &apos;F1&apos; to return in main menu.
+        ///   Looks up a localized string similar to Select item or press &lt;F1&gt; to return in main menu.
         /// </summary>
         internal static string MsgPage {
             get {
