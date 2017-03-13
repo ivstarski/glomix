@@ -136,7 +136,7 @@
                 $"Load {menu[index]}. Waiting...".Print();
                 page = Glomix.Page(menu[index].Url).Result;
                 page.Print();
-                $"Page {page.Number} of {page.Paginator.Max}".Print(ConsoleColor.DarkGreen);
+                $"Page {page.Paginator.Num} of {page.Paginator.Max}".Print(ConsoleColor.DarkGreen);
             }
         }
 

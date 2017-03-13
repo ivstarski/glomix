@@ -1,5 +1,7 @@
 namespace sdk.model
 {
+    using System.Linq;
+
     public class Paginator : System.Collections.Generic.List<Paginator.PaginatorItem>
     {
         public class PaginatorItem : IContent
@@ -11,5 +13,6 @@ namespace sdk.model
 
         public int Max { get; set; }
         public int Min { get; set; }
+        public string Num => Count > 0 ? this.First(item => item.IsActive).Number : string.Empty;
     }
 }
