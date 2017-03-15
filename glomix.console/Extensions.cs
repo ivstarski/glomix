@@ -37,5 +37,12 @@ namespace glomix.console
 
         public static bool Try(this IList list, ConsoleKeyInfo key, out int n)
             => int.TryParse(key.KeyChar.ToString(), out n) && n >= 0 && n < list.Count;
+
+        public static bool Try(this IList list, string str, out int n)
+            => int.TryParse(str, out n) && n >= 0 && n < list.Count;
+
+        public static bool TryNumber(this IList list, out int index) => list.Try(string.Concat(Console.ReadKey().KeyChar, Console.ReadKey().KeyChar), out index)
+                                                                        && index >= 0
+                                                                        && index < list.Count;
     }
 }

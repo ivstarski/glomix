@@ -109,7 +109,7 @@ namespace glomix.console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select item or press &lt;F1&gt; to return in main menu.
+        ///   Looks up a localized string similar to Select item with format [00] or press &lt;F1&gt; to return in main menu.
         /// </summary>
         internal static string MsgPage {
             get {

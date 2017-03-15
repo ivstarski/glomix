@@ -30,7 +30,7 @@
                         Play();
                         break;
                     case ConsoleKey.F3:
-                        Manage();
+                        Control();
                         break;
                     case ConsoleKey.Escape:
                         Environment.Exit(0);
@@ -82,14 +82,27 @@
                         return;
                 }
 
+                var firstSymbol = key.KeyChar.ToString();
+
+                key = Console.ReadKey();
+                switch( key.Key )
+                {
+                    case ConsoleKey.F1:
+                        Menu();
+                        return;
+                    case ConsoleKey.Escape:
+                        Environment.Exit(0);
+                        return;
+                }
+
                 int number;
-                if( files.Try(key, out number) )
+                if( files.Try(firstSymbol + key.KeyChar, out number) )
                     Process.Start("wmplayer.exe", "\"" + files[number].FullName + "\"");
             }
             else $"Directory {path} is empty".Print(ConsoleColor.Red);
         }
 
-        private static void Manage()
+        private static void Control()
         {
             var directoryMp3 = Properties.Resources.DirectoryMp3;
             if( Directory.Exists(directoryMp3) )
@@ -146,23 +159,12 @@
             while( true )
             {
                 Properties.Resources.MsgPage.Print();
-                key = Console.ReadKey();
-                switch( key.Key )
-                {
-                    case ConsoleKey.F1:
-                        Menu();
-                        return;
-                    case ConsoleKey.Escape:
-                        Environment.Exit(0);
-                        return;
-                }
-
                 int index;
-                if( page.Try(key, out index) )
+                if( page.TryNumber(out index) )
                 {
                     $"Select {page[index].Title}".Print();
                     mix = Glomix.Mix(page[index].Url).Result;
-                    return;
+                    break;
                 }
             }
         }
@@ -183,14 +185,14 @@
                 {
                     if( e.ProgressPercentage != percentage )
                     {
-                        Status.SetPercentage(tempMix, (percentage = e.ProgressPercentage));
+                        Status.Set(tempMix, (percentage = e.ProgressPercentage));
                         switch( e.ProgressPercentage )
                         {
                             case 0:
-                                Status.Add(tempMix);
+                                Status.Register(tempMix);
                                 break;
                             case 100:
-                                Status.Remove(tempMix);
+                                Status.UnRegister(tempMix);
                                 $"{tempMix.Title} downloaded.".Print(ConsoleColor.DarkMagenta);
                                 break;
                         }

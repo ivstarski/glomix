@@ -136,6 +136,6 @@ Select number of mix, whan you want delete or [del] if delete all.</value>
 &lt;F3&gt; - Managing</value>
   </data>
   <data name="MsgPage" xml:space="preserve">
-    <value>Select item or press &lt;F1&gt; to return in main menu</value>
+    <value>Select item with format [00] or press &lt;F1&gt; to return in main menu</value>
   </data>
 </root>

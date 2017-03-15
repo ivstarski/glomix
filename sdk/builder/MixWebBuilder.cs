@@ -17,14 +17,14 @@
             var cq = CQ.Create(Html(url))[".top-single.clearfix .col-md-3"];
             var mix = new Mix
             {
-                Title    = cq[".header-title a"][0].InnerText,
-                Genre    = (cq[".genre-single-item.single-item-field a"])[0].InnerText,
-                Artist   = (cq[".artist-single-item.single-item-field a"])[0].InnerText,
-                Duration = (cq[".duration-single-item.single-item-field .prop-value"])[0].InnerText,
-                Quality  = (cq[".quality-single-item.single-item-field .prop-value"])[0].InnerText,
-                Size     = (cq[".size-single-item.single-item-field .prop-value"])[0].InnerText,
-                PostDate = (cq[".post-date-single-item.single-item-field .prop-value"])[0].InnerText,
-                RecDate  = (cq[".rec-date-single-item.single-item-field .prop-value"])[0].InnerText,
+                Title    = cq[".header-title a"][0]?.InnerText,
+                Genre    = (cq[".genre-single-item.single-item-field a"])[0]?.InnerText,
+                Artist   = (cq[".artist-single-item.single-item-field a"])[0]?.InnerText,
+                Duration = (cq[".duration-single-item.single-item-field .prop-value"])[0]?.InnerText,
+                Quality  = (cq[".quality-single-item.single-item-field .prop-value"])[0]?.InnerText,
+                Size     = (cq[".size-single-item.single-item-field .prop-value"])[0]?.InnerText,
+                PostDate = (cq[".post-date-single-item.single-item-field .prop-value"])[0]?.InnerText,
+                RecDate  = (cq[".rec-date-single-item.single-item-field .prop-value"])[0]?.InnerText,
                 Href     = (cq[".download-link-zippy.z-external-link.download-animate-link"])[0].Attributes["href"]
             };
             mix.Source = await GetMp3Source(mix.Href);
