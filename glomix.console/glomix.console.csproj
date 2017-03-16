@@ -71,6 +71,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ResultType.cs" />
     <Compile Include="Status.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,7 @@
             Menu();
             do
             {
-                switch( (key = Console.ReadKey(false)).Key )
+                switch ((key = Console.ReadKey(false)).Key)
                 {
                     case ConsoleKey.F1:
                         Menu();
@@ -42,12 +42,12 @@
                         Menu();
                         break;
                 }
-            } while( key.Key != ConsoleKey.Escape );
+            } while (key.Key != ConsoleKey.Escape);
         }
 
         private static void Menu()
         {
-            if( menu == null )
+            if (menu == null)
                 menu = Glomix.Menu(Properties.Resources.Host).Result;
             menu.Print();
             Properties.Resources.MsgMenu.Print();
@@ -56,14 +56,14 @@
         private static void Play()
         {
             var path = Properties.Resources.DirectoryMp3;
-            if( Directory.Exists(path) )
+            if (Directory.Exists(path))
             {
                 var files = Directory.GetFiles(path)
                     .Select(s => new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), s)))
                     .ToList();
 
                 // if empty
-                if( !files.Any() )
+                if (!files.Any())
                 {
                     $"Directory {path} is empty".Print(ConsoleColor.Red);
                     return;
@@ -71,33 +71,17 @@
 
                 files.Print();
                 Properties.Resources.MsgPage.Print();
-                key = Console.ReadKey();
-                switch( key.Key )
+
+                int index;
+                switch (files.Try(out index))
                 {
-                    case ConsoleKey.F1:
+                    case ResultType.Ok:
+                        Process.Start("wmplayer.exe", "\"" + files[index].FullName + "\"");
+                        return;
+                    case ResultType.Menu:
                         Menu();
                         return;
-                    case ConsoleKey.Escape:
-                        Environment.Exit(0);
-                        return;
                 }
-
-                var firstSymbol = key.KeyChar.ToString();
-
-                key = Console.ReadKey();
-                switch( key.Key )
-                {
-                    case ConsoleKey.F1:
-                        Menu();
-                        return;
-                    case ConsoleKey.Escape:
-                        Environment.Exit(0);
-                        return;
-                }
-
-                int number;
-                if( files.Try(firstSymbol + key.KeyChar, out number) )
-                    Process.Start("wmplayer.exe", "\"" + files[number].FullName + "\"");
             }
             else $"Directory {path} is empty".Print(ConsoleColor.Red);
         }
@@ -105,36 +89,40 @@
         private static void Control()
         {
             var directoryMp3 = Properties.Resources.DirectoryMp3;
-            if( Directory.Exists(directoryMp3) )
+            if (Directory.Exists(directoryMp3))
             {
-                while( true )
+                while (true)
                 {
                     var files = Directory.GetFiles(directoryMp3)
                         .Select(s => new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), s)))
                         .ToList();
 
                     // if empty
-                    if( !files.Any() ) break;
+                    if (!files.Any()) break;
 
                     files.Print();
                     Properties.Resources.MsgManage.Print();
-                    key = Console.ReadKey();
-                    switch( key.Key )
+
+                    int index;
+                    switch (files.Try(out index))
                     {
-                        case ConsoleKey.F1:
-                            Menu();
+                        case ResultType.Ok:
+                            File.Delete(files[index].FullName);
                             return;
-                        case ConsoleKey.Escape:
-                            Environment.Exit(0);
-                            return;
-                        case ConsoleKey.Delete:
+                        case ResultType.Delete:
                             files.ForEach(info => File.Delete(info.FullName));
                             Menu();
                             return;
+                        case ResultType.Continue:
+                            continue;
+                        case ResultType.Menu:
+                            Menu();
+                            return;
                     }
+
                     // delete mix
                     int number;
-                    if( files.Try(key, out number) )
+                    if (files.Try(key, out number))
                         File.Delete(files[number].FullName);
                 }
             }
@@ -145,7 +133,7 @@
         private static void Page()
         {
             int index;
-            if( menu.Try(key, out index) )
+            if (menu.Try(key, out index))
             {
                 $"Load {menu[index]}. Waiting...".Print();
                 page = Glomix.Page(menu[index].Url).Result;
@@ -156,15 +144,21 @@
 
         private static void Mix()
         {
-            while( true )
+            while (true)
             {
                 Properties.Resources.MsgPage.Print();
                 int index;
-                if( page.TryNumber(out index) )
+                switch (page.Try(out index))
                 {
-                    $"Select {page[index].Title}".Print();
-                    mix = Glomix.Mix(page[index].Url).Result;
-                    break;
+                    case ResultType.Ok:
+                        $"Select {page[index].Title}".Print();
+                        mix = Glomix.Mix(page[index].Url).Result;
+                        return;
+                    case ResultType.Continue:
+                        continue;
+                    case ResultType.Menu:
+                        Menu();
+                        return;
                 }
             }
         }
@@ -174,19 +168,19 @@
             var path = CheckMix();
 
             // if path is empty, file has been downloaded
-            if( string.IsNullOrEmpty(path) )
+            if (string.IsNullOrEmpty(path))
                 return;
 
-            var tempMix = (Mix)mix.Clone();
-            using( var wc = new WebClient { Proxy = null } )
+            var tempMix = (Mix) mix.Clone();
+            using (var wc = new WebClient {Proxy = null})
             {
                 var percentage = -1;
                 wc.DownloadProgressChanged += (sender, e) =>
                 {
-                    if( e.ProgressPercentage != percentage )
+                    if (e.ProgressPercentage != percentage)
                     {
                         Status.Set(tempMix, (percentage = e.ProgressPercentage));
-                        switch( e.ProgressPercentage )
+                        switch (e.ProgressPercentage)
                         {
                             case 0:
                                 Status.Register(tempMix);
@@ -206,18 +200,18 @@
 
         private static string CheckMix()
         {
-            if( mix == null )
+            if (mix == null)
                 return string.Empty;
             var directoryMp3 = Properties.Resources.DirectoryMp3;
             var path = $"{directoryMp3}/{mix.Title}.mp3";
-            if( Directory.Exists(directoryMp3) == false )
+            if (Directory.Exists(directoryMp3) == false)
                 Directory.CreateDirectory(directoryMp3);
-            if( File.Exists(path) )
+            if (File.Exists(path))
             {
-                while( true )
+                while (true)
                 {
                     $"{mix.Title} has been downloaded.\nCan You Overwrite Mix? [y/n]".Print(ConsoleColor.Red);
-                    switch( Console.ReadKey().Key )
+                    switch (Console.ReadKey().Key)
                     {
                         case ConsoleKey.N:
                             return string.Empty;

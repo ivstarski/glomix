@@ -24,8 +24,7 @@
         public static void Set(Mix mix, int percentage)
         {
             var sts = items.FirstOrDefault(status => status.Mix == mix);
-            if( sts != null )
-                sts.Percentage = percentage;
+            if( sts != null ) sts.Percentage = percentage;
         }
         public static void Print()
         {
