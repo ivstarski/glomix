@@ -60,8 +60,7 @@ namespace glomix.console
                 case ConsoleKey.Escape: Environment.Exit(0); break;
             }
 
-            int index;
-            return list.Try(string.Concat(key1.KeyChar, key2.KeyChar), out index) ? ResultType.Ok : ResultType.Continue;
+            return list.Try(string.Concat(key1.KeyChar, key2.KeyChar), out n) ? ResultType.Ok : ResultType.Continue;
         }
     }
 }

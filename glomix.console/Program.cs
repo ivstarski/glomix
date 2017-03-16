@@ -119,11 +119,6 @@
                             Menu();
                             return;
                     }
-
-                    // delete mix
-                    int number;
-                    if (files.Try(key, out number))
-                        File.Delete(files[number].FullName);
                 }
             }
             $"Directory {directoryMp3} is empty".Print(ConsoleColor.Red);
