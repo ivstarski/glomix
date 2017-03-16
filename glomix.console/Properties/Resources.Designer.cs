@@ -79,15 +79,6 @@ namespace glomix.console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to F1.
-        /// </summary>
-        internal static string KeyMenu {
-            get {
-                return ResourceManager.GetString("KeyMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Press &lt;F1&gt; for return to MENU
         ///Select number of mix, whan you want delete or [del] if delete all..
         /// </summary>
@@ -100,7 +91,8 @@ namespace glomix.console.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Select menu or run other operations:
         ///&lt;F2&gt; - Play
-        ///&lt;F3&gt; - Managing.
+        ///&lt;F3&gt; - Managing
+        ///&lt;F4&gt; - Rebase.
         /// </summary>
         internal static string MsgMenu {
             get {

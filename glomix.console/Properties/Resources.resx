@@ -123,9 +123,6 @@
   <data name="Host" xml:space="preserve">
     <value>https://globaldjmix.com</value>
   </data>
-  <data name="KeyMenu" xml:space="preserve">
-    <value>F1</value>
-  </data>
   <data name="MsgManage" xml:space="preserve">
     <value>Press &lt;F1&gt; for return to MENU
 Select number of mix, whan you want delete or [del] if delete all.</value>
@@ -133,7 +130,8 @@ Select number of mix, whan you want delete or [del] if delete all.</value>
   <data name="MsgMenu" xml:space="preserve">
     <value>Select menu or run other operations:
 &lt;F2&gt; - Play
-&lt;F3&gt; - Managing</value>
+&lt;F3&gt; - Managing
+&lt;F4&gt; - Rebase</value>
   </data>
   <data name="MsgPage" xml:space="preserve">
     <value>Select item with format [00] or press &lt;F1&gt; to return in main menu</value>

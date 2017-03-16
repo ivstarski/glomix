@@ -17,7 +17,7 @@ namespace glomix.console
         public static List<FileInfo> Print(this List<FileInfo> list, ConsoleColor color = ConsoleColor.White)
         {
             for( var i = 0; i < list.Count; i++ )
-                Print($"{i:D2}. {list[i].Name}", color);
+                Print($"{i:D2}. {list[i].Name} ...{list[i].Length/1024/1024} Mb", color);
             return list;
         }
 
@@ -49,6 +49,8 @@ namespace glomix.console
             {
                 case ConsoleKey.F1: return ResultType.Menu;
                 case ConsoleKey.Delete: return ResultType.Delete;
+                case ConsoleKey.Home: return ResultType.Home;
+                case ConsoleKey.C: return ResultType.Configure;
                 case ConsoleKey.Escape: Environment.Exit(0); break;
             }
 
@@ -57,9 +59,10 @@ namespace glomix.console
             {
                 case ConsoleKey.F1: return ResultType.Menu; ;
                 case ConsoleKey.Delete: return ResultType.Delete;
+                case ConsoleKey.C: return ResultType.Configure;
+                case ConsoleKey.Home: return ResultType.Home;
                 case ConsoleKey.Escape: Environment.Exit(0); break;
             }
-
             return list.Try(string.Concat(key1.KeyChar, key2.KeyChar), out n) ? ResultType.Ok : ResultType.Continue;
         }
     }
