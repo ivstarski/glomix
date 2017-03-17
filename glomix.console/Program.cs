@@ -66,13 +66,13 @@
                 int index;
                 switch( page.Try(out index) )
                 {
-                    case ResultType.Ok:
+                    case Result.Ok:
                         $"Select {page[index].Title}".Print();
                         mix = Glomix.Mix(page[index].Url).Result;
                         return;
-                    case ResultType.Continue:
+                    case Result.Continue:
                         continue;
-                    case ResultType.Menu:
+                    case Result.Menu:
                         Menu();
                         return;
                 }
@@ -101,10 +101,10 @@
                 int index;
                 switch( files.Try(out index) )
                 {
-                    case ResultType.Ok:
+                    case Result.Ok:
                         Process.Start("wmplayer.exe", "\"" + files[index].FullName + "\"");
                         return;
-                    case ResultType.Menu:
+                    case Result.Menu:
                         Menu();
                         return;
                 }
@@ -132,17 +132,17 @@
                     int index;
                     switch( files.Try(out index) )
                     {
-                        case ResultType.Ok:
+                        case Result.Ok:
                             File.Delete(files[index].FullName);
                             $"{files[index].FullName} deleted.".Print(ConsoleColor.Green);
                             continue;
-                        case ResultType.Delete:
+                        case Result.Delete:
                             files.ForEach(info => File.Delete(info.FullName));
                             Menu();
                             return;
-                        case ResultType.Continue:
+                        case Result.Continue:
                             continue;
-                        case ResultType.Menu:
+                        case Result.Menu:
                             Menu();
                             return;
                     }
@@ -196,12 +196,12 @@
                 int index;
                 switch( files.Try(out index) )
                 {
-                    case ResultType.Ok:
+                    case Result.Ok:
                         File.Move(files[index].FullName,
                             Path.Combine(Properties.Settings.Default.RebasePath, files[index].Name));
                         $"{files[index].FullName} rebased.".Print(ConsoleColor.Green);
                         continue;
-                    case ResultType.Home:
+                    case Result.Home:
                         files.ForEach(info =>
                         {
                             File.Move(info.FullName, Path.Combine(Properties.Settings.Default.RebasePath, info.Name));
@@ -210,12 +210,12 @@
                         "All files rebased.".Print(ConsoleColor.Green);
                         Menu();
                         return;
-                    case ResultType.Continue:
+                    case Result.Continue:
                         continue;
-                    case ResultType.Configure:
+                    case Result.Configure:
                         Properties.Settings.Default.RebasePath = "";
                         continue;
-                    case ResultType.Menu:
+                    case Result.Menu:
                         Menu();
                         return;
                 }
@@ -261,10 +261,11 @@
         {
             if( mix == null )
                 return string.Empty;
-            var directoryMp3 = Properties.Resources.DirectoryMp3;
-            var path = $"{directoryMp3}/{mix.Title}.mp3";
-            if( Directory.Exists(directoryMp3) == false )
-                Directory.CreateDirectory(directoryMp3);
+
+            var path = $"{Properties.Resources.DirectoryMp3}/{mix.Title}.mp3";
+            if( Directory.Exists(Properties.Resources.DirectoryMp3) == false )
+                Directory.CreateDirectory(Properties.Resources.DirectoryMp3);
+
             if( File.Exists(path) )
             {
                 while( true )

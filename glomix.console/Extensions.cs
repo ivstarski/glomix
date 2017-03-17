@@ -41,29 +41,29 @@ namespace glomix.console
         public static bool Try(this IList list, string str, out int n)
             => int.TryParse(str, out n) && n >= 0 && n < list.Count;
 
-        public static ResultType Try(this IList list, out int n)
+        public static Result Try(this IList list, out int n)
         {
             n = 0;
             var key1 = Console.ReadKey();
             switch( key1.Key )
             {
-                case ConsoleKey.F1: return ResultType.Menu;
-                case ConsoleKey.Delete: return ResultType.Delete;
-                case ConsoleKey.Home: return ResultType.Home;
-                case ConsoleKey.C: return ResultType.Configure;
+                case ConsoleKey.F1: return Result.Menu;
+                case ConsoleKey.Delete: return Result.Delete;
+                case ConsoleKey.Home: return Result.Home;
+                case ConsoleKey.C: return Result.Configure;
                 case ConsoleKey.Escape: Environment.Exit(0); break;
             }
 
             var key2 = Console.ReadKey();
             switch( key2.Key )
             {
-                case ConsoleKey.F1: return ResultType.Menu; ;
-                case ConsoleKey.Delete: return ResultType.Delete;
-                case ConsoleKey.C: return ResultType.Configure;
-                case ConsoleKey.Home: return ResultType.Home;
+                case ConsoleKey.F1: return Result.Menu; ;
+                case ConsoleKey.Delete: return Result.Delete;
+                case ConsoleKey.C: return Result.Configure;
+                case ConsoleKey.Home: return Result.Home;
                 case ConsoleKey.Escape: Environment.Exit(0); break;
             }
-            return list.Try(string.Concat(key1.KeyChar, key2.KeyChar), out n) ? ResultType.Ok : ResultType.Continue;
+            return list.Try(string.Concat(key1.KeyChar, key2.KeyChar), out n) ? Result.Ok : Result.Continue;
         }
     }
 }
