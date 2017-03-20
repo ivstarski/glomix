@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using Properties;
     using sdk;
     using sdk.model;
 
@@ -41,9 +42,9 @@
         private static void Menu()
         {
             if( menu == null )
-                menu = Glomix.Menu(Properties.Resources.Host).Result;
+                menu = Glomix.Menu(Resources.Host).Result;
             menu.Print();
-            Properties.Resources.MsgMenu.Print();
+            Resources.MsgMenu.Print();
         }
 
         private static void Page()
@@ -62,7 +63,7 @@
         {
             while( true )
             {
-                Properties.Resources.MsgPage.Print();
+                Resources.MsgPage.Print();
                 int index;
                 switch( page.Try(out index) )
                 {
@@ -81,7 +82,7 @@
 
         private static void Play()
         {
-            var path = Properties.Resources.DirectoryMp3;
+            var path = Resources.DirectoryMp3;
             if( Directory.Exists(path) )
             {
                 var files = Directory.GetFiles(path)
@@ -96,7 +97,7 @@
                 }
 
                 files.Print();
-                Properties.Resources.MsgPage.Print();
+                Resources.MsgPage.Print();
 
                 int index;
                 switch( files.Try(out index) )
@@ -114,7 +115,7 @@
 
         private static void Control()
         {
-            var directoryMp3 = Properties.Resources.DirectoryMp3;
+            var directoryMp3 = Resources.DirectoryMp3;
             if( Directory.Exists(directoryMp3) )
             {
                 while( true )
@@ -127,7 +128,7 @@
                     if( !files.Any() ) break;
 
                     files.Print();
-                    Properties.Resources.MsgManage.Print();
+                    Resources.MsgManage.Print();
 
                     int index;
                     switch( files.Try(out index) )
@@ -156,7 +157,7 @@
         {
             while( true )
             {
-                if( string.IsNullOrEmpty(Properties.Settings.Default.RebasePath) )
+                if( string.IsNullOrEmpty(Settings.Default.RebasePath) )
                 {
                     "Rebase path is not exists. Want you create? [y/n]".Print();
                     switch( Console.ReadKey().Key )
@@ -169,42 +170,49 @@
                             var path = Console.ReadLine();
                             if( Directory.Exists(path) )
                             {
-                                Properties.Settings.Default.RebasePath = path;
-                                Properties.Settings.Default.Save();
+                                Settings.Default.RebasePath = path;
+                                Settings.Default.Save();
                             }
                             else "Entered path of directory not exists".Print(ConsoleColor.Red);
                             break;
                     }
                 }
 
-                var files = Directory.GetFiles(Properties.Resources.DirectoryMp3)
+                var files = Directory.GetFiles(Resources.DirectoryMp3)
                     .Select(s => new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), s)))
                     .ToList();
 
                 // if empty
                 if( !files.Any() )
                 {
-                    $"Directory {Properties.Resources.DirectoryMp3} is empty".Print(ConsoleColor.Red);
+                    $"Directory {Resources.DirectoryMp3} is empty".Print(ConsoleColor.Red);
                     Menu();
                     break;
                 }
 
                 files.Print();
 
-                $"Select num mix to rebase, <DEL> for rebase all mixes or <C> for settings rebase dir\ncurrent dir [{Properties.Settings.Default.RebasePath}]".Print();
+                $"Select num mix to rebase, <Home> for rebase all mixes or <C> for settings rebase dir\ncurrent dir [{Settings.Default.RebasePath}]".Print();
 
                 int index;
                 switch( files.Try(out index) )
                 {
                     case Result.Ok:
-                        File.Move(files[index].FullName,
-                            Path.Combine(Properties.Settings.Default.RebasePath, files[index].Name));
-                        $"{files[index].FullName} rebased.".Print(ConsoleColor.Green);
+                        {
+                            var destFileName = Path.Combine(Settings.Default.RebasePath, files[index].Name);
+                            if( File.Exists(destFileName) )
+                                File.Delete(destFileName);
+                            File.Move(files[index].FullName, destFileName);
+                            $"{files[index].FullName} rebased.".Print(ConsoleColor.Green);
+                        }
                         continue;
                     case Result.Home:
                         files.ForEach(info =>
                         {
-                            File.Move(info.FullName, Path.Combine(Properties.Settings.Default.RebasePath, info.Name));
+                            var destFileName = Path.Combine(Settings.Default.RebasePath, info.Name);
+                            if( File.Exists(destFileName) )
+                                File.Delete(destFileName);
+                            File.Move(info.FullName, destFileName);
                             $"{info.FullName} rebased.".Print(ConsoleColor.Green);
                         });
                         "All files rebased.".Print(ConsoleColor.Green);
@@ -213,7 +221,7 @@
                     case Result.Continue:
                         continue;
                     case Result.Configure:
-                        Properties.Settings.Default.RebasePath = "";
+                        Settings.Default.RebasePath = "";
                         continue;
                     case Result.Menu:
                         Menu();
@@ -262,9 +270,9 @@
             if( mix == null )
                 return string.Empty;
 
-            var path = $"{Properties.Resources.DirectoryMp3}/{mix.Title}.mp3";
-            if( Directory.Exists(Properties.Resources.DirectoryMp3) == false )
-                Directory.CreateDirectory(Properties.Resources.DirectoryMp3);
+            var path = $"{Resources.DirectoryMp3}/{mix.Title}.mp3";
+            if( Directory.Exists(Resources.DirectoryMp3) == false )
+                Directory.CreateDirectory(Resources.DirectoryMp3);
 
             if( File.Exists(path) )
             {
