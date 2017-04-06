@@ -7,6 +7,8 @@ namespace glomix.console
 
     internal static class Extensions
     {
+        private const int MEGABYTE = 1048576;
+
         public static IList Print(this IList list, ConsoleColor color = ConsoleColor.White)
         {
             for( var i = 0; i < list.Count; i++ )
@@ -17,7 +19,7 @@ namespace glomix.console
         public static List<FileInfo> Print(this List<FileInfo> list, ConsoleColor color = ConsoleColor.White)
         {
             for( var i = 0; i < list.Count; i++ )
-                Print($"{i:D2}. {list[i].Name} ...{list[i].Length/1024/1024} Mb", color);
+                Print($"{i:D2}. [{list[i].Length/MEGABYTE} Mb] {list[i].Name} ", color);
             return list;
         }
 
@@ -47,16 +49,18 @@ namespace glomix.console
             var key1 = Console.ReadKey();
             switch( key1.Key )
             {
-                case ConsoleKey.F1: return Result.Menu;
+                case ConsoleKey.RightArrow: return Result.Next;
                 case ConsoleKey.Delete: return Result.Delete;
-                case ConsoleKey.Home: return Result.Home;
                 case ConsoleKey.C: return Result.Configure;
+                case ConsoleKey.Home: return Result.Home;
+                case ConsoleKey.F1: return Result.Menu;
                 case ConsoleKey.Escape: Environment.Exit(0); break;
             }
 
             var key2 = Console.ReadKey();
             switch( key2.Key )
             {
+                case ConsoleKey.RightArrow: return Result.Next;
                 case ConsoleKey.F1: return Result.Menu; ;
                 case ConsoleKey.Delete: return Result.Delete;
                 case ConsoleKey.C: return Result.Configure;

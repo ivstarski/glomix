@@ -14,6 +14,7 @@ namespace glomix.console
         Configure,
         Menu,
         Delete,
-        Home
+        Home,
+        Next
     }
 }

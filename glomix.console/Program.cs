@@ -87,6 +87,7 @@
             {
                 var files = Directory.GetFiles(path)
                     .Select(s => new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), s)))
+                    .OrderByDescending(info => info.CreationTime)
                     .ToList();
 
                 // if empty
