@@ -2,6 +2,7 @@ namespace sdk.builder
 {
     using System;
     using System.Net;
+    using System.Text;
     using System.Threading.Tasks;
     using model;
 
@@ -13,7 +14,7 @@ namespace sdk.builder
         {
             try
             {
-                using( var wc = new WebClient { Proxy = null } )
+                using( var wc = new WebClient { Proxy = null, Encoding = Encoding.UTF8} )
                     return wc.DownloadString(new Uri(url));
             }
             catch

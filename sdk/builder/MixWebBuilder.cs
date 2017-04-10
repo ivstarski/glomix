@@ -61,7 +61,10 @@
                     {
                         var br = (ChromiumWebBrowser)sender;
                         br.LoadingStateChanged -= handler;
-                        tcs.TrySetResult((await br.EvaluateScriptAsync("document.getElementById('dlbutton').href;")).Result.ToString());
+                        var response = await br.EvaluateScriptAsync("document.getElementById('dlbutton').href;");
+                        if( response.Result == null )
+                            response = await br.EvaluateScriptAsync("document.getElementsByClassName('last-item')[0].children[1].href;");
+                        tcs.TrySetResult(response.Result.ToString());
                     }
                 };
                 browser.LoadingStateChanged += handler;
